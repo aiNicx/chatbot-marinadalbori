@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { Message } from './types';
+import { Message, BotAction } from './types';
+import { Button } from '@/components/ui/button';
 
 interface ChatMessagesProps {
   messages: Message[];
   isTyping: boolean;
+  onActionClick?: (action: BotAction) => void;
 }
 
 // Typing indicator component
