@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { Message, ApiResponse } from './types';
+import { Message, ApiResponse, BotAction } from './types';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
+import { useLocation } from 'wouter';
 
 interface ChatContainerProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
   const [isTyping, setIsTyping] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   // On mount, check for existing session in localStorage
   useEffect(() => {
@@ -61,6 +63,77 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
     }
   };
 
+  // Funzione per estrarre e gestire azioni dal messaggio del bot
+  const handleBotActions = (message: string): { extractedMessage: string, actions: BotAction[] } => {
+    const actions: BotAction[] = [];
+    let extractedMessage = message;
+    
+    try {
+      // Cerca pattern JSON per azioni nei messaggi 
+      // Pattern previsto: {...}
+      const jsonPattern = /\{[\s\S]*?type[\s\S]*?button[\s\S]*?\}/g;
+      const matches = message.match(jsonPattern);
+      
+      if (matches && matches.length > 0) {
+        // Per ogni match trovato
+        matches.forEach(match => {
+          try {
+            // Converte la stringa JSON in oggetto
+            const actionObj = JSON.parse(match);
+            
+            // Verifica che sia un'azione valida
+            if (actionObj.type === 'button' && 
+                actionObj.label && 
+                (actionObj.action === 'navigate' || actionObj.action === 'scroll') && 
+                actionObj.target) {
+              
+              // Aggiunge l'azione all'array
+              actions.push({
+                type: actionObj.type,
+                label: actionObj.label,
+                action: actionObj.action,
+                target: actionObj.target
+              });
+              
+              // Rimuove il JSON dal messaggio visualizzato
+              extractedMessage = extractedMessage.replace(match, '');
+            }
+          } catch (e) {
+            console.error('Errore nel parsing del JSON per azione:', e);
+          }
+        });
+        
+        // Pulizia del messaggio (rimuove linee vuote multiple, etc.)
+        extractedMessage = extractedMessage.replace(/\n{3,}/g, '\n\n').trim();
+      }
+    } catch (error) {
+      console.error('Errore nell\'elaborazione delle azioni:', error);
+    }
+    
+    return { extractedMessage, actions };
+  };
+  
+  // Funzione per eseguire le azioni quando l'utente clicca sul bottone
+  const executeAction = (action: BotAction) => {
+    switch (action.action) {
+      case 'navigate':
+        // Navigazione a una nuova pagina
+        setLocation(action.target);
+        break;
+      case 'scroll':
+        // Scrolling a un elemento nella pagina
+        const element = document.querySelector(action.target);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          console.error(`Elemento non trovato: ${action.target}`);
+        }
+        break;
+      default:
+        console.error(`Tipo di azione non supportata: ${action.action}`);
+    }
+  };
+
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim()) return;
 
@@ -74,10 +147,12 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
     setIsTyping(true);
 
     try {
-      const response = await apiRequest('POST', '/api/chat', {
-        message: messageText,
-        sessionId
-      });
+      // Invia il sessionId solo se esiste, altrimenti lascia che il server ne generi uno nuovo
+      const payload = sessionId 
+        ? { message: messageText, sessionId } 
+        : { message: messageText };
+      
+      const response = await apiRequest('POST', '/api/chat', payload);
       
       const data: ApiResponse = await response.json();
       
@@ -87,10 +162,14 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
         localStorage.setItem('chat_session_id', data.sessionId);
       }
       
+      // Analizza la risposta per individuare eventuali azioni o pulsanti
+      const { extractedMessage, actions } = handleBotActions(data.message);
+      
       // Add AI response to chat
       const assistantMessage: Message = {
         role: 'assistant',
-        content: data.message
+        content: extractedMessage,
+        actions: actions
       };
       
       setMessages((prev) => [...prev, assistantMessage]);
