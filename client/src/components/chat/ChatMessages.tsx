@@ -41,33 +41,45 @@ export default function ChatMessages({ messages, isTyping, onActionClick }: Chat
         >
           <div className={`flex items-start ${message.role === 'user' ? 'justify-end' : ''}`}>
             {message.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mr-2">
-                <span className="text-primary font-serif font-bold text-sm">M</span>
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mr-2 shadow-sm">
+                <span className="text-blue-700 font-serif font-bold text-sm">M</span>
               </div>
             )}
             <div
               className={`${
                 message.role === 'user'
-                  ? 'bg-primary text-white'
-                  : 'bg-blue-50 text-gray-800'
-              } rounded-lg py-2 px-4 max-w-[80%]`}
+                  ? 'bg-blue-700 text-white'
+                  : 'bg-gray-100 text-gray-800'
+              } rounded-2xl py-3 px-4 max-w-[80%] shadow-sm`}
             >
-              <p className="text-sm whitespace-pre-line">{message.content}</p>
+              <p className="text-sm whitespace-pre-line font-light leading-relaxed">{message.content}</p>
             </div>
           </div>
           
           {/* Pulsanti di azione (se presenti) */}
           {message.actions && message.actions.length > 0 && (
-            <div className={`mt-2 flex flex-wrap gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'} max-w-[80%]`}>
+            <div className={`mt-3 flex flex-wrap gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'} max-w-[80%]`}>
               {message.actions.map((action, actionIndex) => (
                 <Button
                   key={actionIndex}
                   variant="outline"
                   size="sm"
-                  className="bg-white text-primary border-primary hover:bg-primary/10"
+                  className={`rounded-full text-blue-700 border-blue-200 bg-white hover:bg-blue-50 transition-colors shadow-sm ${
+                    action.action === 'navigate' ? 'pl-3 pr-4' : 'pl-3 pr-4'
+                  }`}
                   onClick={() => onActionClick && onActionClick(action)}
                 >
-                  {action.label}
+                  {action.action === 'navigate' ? (
+                    <span className="flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                      {action.label}
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
+                      {action.label}
+                    </span>
+                  )}
                 </Button>
               ))}
             </div>
@@ -78,10 +90,10 @@ export default function ChatMessages({ messages, isTyping, onActionClick }: Chat
       {/* Typing indicator */}
       {isTyping && (
         <div className="flex items-start mb-4">
-          <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mr-2">
-            <span className="text-primary font-serif font-bold text-sm">M</span>
+          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mr-2 shadow-sm">
+            <span className="text-blue-700 font-serif font-bold text-sm">M</span>
           </div>
-          <div className="bg-gray-200 text-gray-500 rounded-lg py-2 px-4">
+          <div className="bg-gray-100 text-gray-500 rounded-2xl py-3 px-4 shadow-sm">
             <TypingIndicator />
           </div>
         </div>

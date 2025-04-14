@@ -69,10 +69,12 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
     let extractedMessage = message;
     
     try {
-      // Cerca pattern JSON per azioni nei messaggi 
-      // Pattern previsto: {...}
-      const jsonPattern = /\{[\s\S]*?type[\s\S]*?button[\s\S]*?\}/g;
+      // Migliora il pattern di ricerca per essere più flessibile
+      // Cerca sia pattern JSON esatti che testo strutturato che potrebbe contenere azioni
+      const jsonPattern = /\{[\s\S]*?"type"[\s\S]*?"button"[\s\S]*?\}/g;
       const matches = message.match(jsonPattern);
+      
+      console.log("Pattern trovati nel messaggio:", matches);
       
       if (matches && matches.length > 0) {
         // Per ogni match trovato
@@ -80,6 +82,7 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
           try {
             // Converte la stringa JSON in oggetto
             const actionObj = JSON.parse(match);
+            console.log("Oggetto azione estratto:", actionObj);
             
             // Verifica che sia un'azione valida
             if (actionObj.type === 'button' && 
@@ -99,17 +102,53 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
               extractedMessage = extractedMessage.replace(match, '');
             }
           } catch (e) {
-            console.error('Errore nel parsing del JSON per azione:', e);
+            console.error('Errore nel parsing del JSON per azione:', e, "nel testo:", match);
           }
         });
         
         // Pulizia del messaggio (rimuove linee vuote multiple, etc.)
         extractedMessage = extractedMessage.replace(/\n{3,}/g, '\n\n').trim();
       }
+      
+      // Ricerca alternativa per link in forma semplice, nel caso il modello non risponda col formato JSON
+      if (actions.length === 0) {
+        const paginePattern = /(\/[a-z-]+)/g;
+        const elementiPattern = /(#[a-z-]+)/g;
+        
+        const pagine = message.match(paginePattern);
+        const elementi = message.match(elementiPattern);
+        
+        if (pagine) {
+          pagine.forEach(pagina => {
+            if (['/menu', '/prenotazione', '/contatti', '/come-arrivare'].includes(pagina)) {
+              actions.push({
+                type: 'button',
+                label: `Vai a ${pagina.replace('/', '').replace('-', ' ')}`,
+                action: 'navigate',
+                target: pagina
+              });
+            }
+          });
+        }
+        
+        if (elementi) {
+          elementi.forEach(elemento => {
+            if (['#menu', '#contatti', '#orari', '#mappa'].includes(elemento)) {
+              actions.push({
+                type: 'button',
+                label: `Vedi ${elemento.replace('#', '')}`,
+                action: 'scroll',
+                target: elemento
+              });
+            }
+          });
+        }
+      }
     } catch (error) {
       console.error('Errore nell\'elaborazione delle azioni:', error);
     }
     
+    console.log("Azioni estratte:", actions);
     return { extractedMessage, actions };
   };
   
@@ -189,7 +228,7 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
 
   return (
     <div className="fixed bottom-0 right-0 z-50 flex items-end justify-end m-4">
-      <div className="mb-4 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-white rounded-lg shadow-lg flex flex-col overflow-hidden">
+      <div className="mb-4 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-100">
         <ChatHeader onClose={onClose} />
         <ChatMessages 
           messages={messages} 
