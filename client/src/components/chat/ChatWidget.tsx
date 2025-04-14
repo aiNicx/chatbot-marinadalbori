@@ -26,7 +26,7 @@ export default function ChatWidget() {
       <ChatContainer isOpen={isOpen} onClose={toggleChat} />
       
       {/* Add styling for typing indicator animation */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .chat-window::-webkit-scrollbar {
           width: 6px;
         }
@@ -63,7 +63,7 @@ export default function ChatWidget() {
           0%, 60%, 100% { transform: translateY(0); }
           30% { transform: translateY(-4px); }
         }
-      `}</style>
+      `}} />
     </>
   );
 }

@@ -191,7 +191,11 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
     <div className="fixed bottom-0 right-0 z-50 flex items-end justify-end m-4">
       <div className="mb-4 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-white rounded-lg shadow-lg flex flex-col overflow-hidden">
         <ChatHeader onClose={onClose} />
-        <ChatMessages messages={messages} isTyping={isTyping} />
+        <ChatMessages 
+          messages={messages} 
+          isTyping={isTyping} 
+          onActionClick={executeAction} 
+        />
         <ChatInput onSendMessage={sendMessage} disabled={isTyping} />
       </div>
     </div>
