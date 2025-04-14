@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marina D'Albori - Esempio di Embedding del Chatbot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background-color: #1d4ed8;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    nav {
+      background-color: #2563eb;
+      padding: 0.5rem 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1rem;
+      padding: 0.5rem;
+    }
+    .content {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    footer {
+      background-color: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    
+    /* CSS specifico per simulare il sito marinadalbori.it */
+    .hero {
+      background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1514222134-b57cbb8ce073');
+      background-size: cover;
+      background-position: center;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .section {
+      margin: 4rem 0;
+    }
+    .section h2 {
+      color: #1d4ed8;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+  </style>
+  
+  <!-- Include React e ReactDOM (necessari per il chatbot) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Include il foglio di stile del chatbot -->
+  <link rel="stylesheet" href="/dist/embed/assets/index.css">
+</head>
+<body>
+  <header>
+    <h1>Marina D'Albori</h1>
+    <p>Ristorazione sul mare</p>
+  </header>
+  
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="menu.html">Menù</a>
+    <a href="prenotazione.html">Prenotazione</a>
+    <a href="contatti.html">Contatti</a>
+    <a href="come-arrivare.html">Come Arrivare</a>
+  </nav>
+  
+  <div class="hero">
+    <div>
+      <h1>Benvenuti a Marina D'Albori</h1>
+      <p>Un'esperienza culinaria unica sulla costa amalfitana</p>
+    </div>
+  </div>
+  
+  <div class="content">
+    <section class="section" id="ristorante">
+      <h2>Il Nostro Ristorante</h2>
+      <div class="card">
+        <p>
+          Marina D'Albori è un elegante ristorante situato direttamente sul mare della Costa Amalfitana.
+          La nostra cucina è basata sui migliori prodotti locali, con un'attenzione particolare ai frutti di mare freschi
+          e alle ricette tradizionali della costiera.
+        </p>
+        <p>
+          Il nostro ristorante vanta una vista panoramica mozzafiato sul Golfo di Salerno, creando l'ambiente
+          perfetto per una cena romantica o una celebrazione speciale.
+        </p>
+      </div>
+    </section>
+    
+    <section class="section" id="menu">
+      <h2>Il Nostro Menù</h2>
+      <div class="card">
+        <p>
+          Il nostro menù cambia quotidianamente in base ai prodotti freschi disponibili.
+          I nostri chef selezionano personalmente i migliori ingredienti per creare piatti unici che esaltano
+          i sapori autentici della tradizione mediterranea.
+        </p>
+        <p>
+          Offriamo una vasta selezione di piatti di pesce, pasta fatta in casa e dolci tradizionali,
+          accompagnati da una ricercata carta dei vini che include le migliori etichette locali e nazionali.
+        </p>
+      </div>
+    </section>
+  </div>
+  
+  <footer>
+    <p>© 2025 Marina D'Albori - Tutti i diritti riservati</p>
+    <p>Via Marina d'Albori, 84019 Vietri sul Mare (SA)</p>
+  </footer>
+  
+  <!-- Div per il chatbot -->
+  <div id="marina-chatbot"></div>
+  
+  <!-- Script del chatbot -->
+  <script src="/dist/embed/marina-chatbot.umd.js"></script>
+  <script>
+    // Inizializza il chatbot quando la pagina è completamente caricata
+    document.addEventListener('DOMContentLoaded', function() {
+      // Configura il chatbot per mantenere la sessione durante la navigazione
+      MarinaChatbot.init({
+        persistSession: true
+      });
+      
+      // Esempio di listener per eventi di navigazione interna della SPA
+      document.querySelectorAll('nav a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          // In un'applicazione reale, qui gestiresti la navigazione senza ricaricare la pagina
+          console.log('Navigazione a: ' + this.href);
+          
+          // La sessione del chatbot rimane intatta durante la navigazione
+          // grazie al parametro persistSession: true
+        });
+      });
+    });
+  </script>
+</body>
+</html>
