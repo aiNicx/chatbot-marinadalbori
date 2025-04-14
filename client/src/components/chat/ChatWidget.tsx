@@ -23,32 +23,33 @@ export default function ChatWidget() {
   return (
     <>
       <ChatButton onClick={toggleChat} isOpen={isOpen} />
+      {isOpen && <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-40 sm:hidden" onClick={toggleChat} />}
       <ChatContainer isOpen={isOpen} onClose={toggleChat} />
       
-      {/* Add styling for typing indicator animation */}
+      {/* Add styling for animations and scrollbars */}
       <style dangerouslySetInnerHTML={{ __html: `
         .chat-window::-webkit-scrollbar {
-          width: 6px;
+          width: 4px;
         }
         .chat-window::-webkit-scrollbar-track {
-          background: #f1f1f1;
+          background: transparent;
         }
         .chat-window::-webkit-scrollbar-thumb {
-          background: #ccc;
+          background: rgba(0,0,0,0.1);
           border-radius: 10px;
         }
         .chat-window::-webkit-scrollbar-thumb:hover {
-          background: #aaa;
+          background: rgba(0,0,0,0.2);
         }
         .typing-indicator {
           display: inline-flex;
           align-items: center;
         }
         .typing-indicator span {
-          height: 7px;
-          width: 7px;
+          height: 6px;
+          width: 6px;
           margin: 0 1px;
-          background-color: #bbb;
+          background-color: #90b4e0;
           border-radius: 50%;
           display: inline-block;
           animation: bounce 1.3s linear infinite;
@@ -62,6 +63,16 @@ export default function ChatWidget() {
         @keyframes bounce {
           0%, 60%, 100% { transform: translateY(0); }
           30% { transform: translateY(-4px); }
+        }
+        
+        /* Animazioni fluide per apertura/chiusura */
+        @keyframes slideIn {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .chat-container {
+          animation: slideIn 0.2s ease-out;
         }
       `}} />
     </>
