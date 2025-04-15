@@ -227,8 +227,8 @@ export default function ChatContainer({ isOpen, onClose }: ChatContainerProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-0 right-0 z-50 flex items-end justify-end m-0 sm:m-4 transition-transform duration-300 ease-in-out transform">
-      <div className="w-full sm:w-96 h-[70vh] sm:h-[500px] max-h-[90vh] bg-white rounded-t-2xl sm:rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-100 transition-all chat-container">
+    <div className="fixed inset-0 sm:inset-auto sm:bottom-0 sm:right-0 z-50 flex items-end justify-end sm:m-4 transition-all duration-300 ease-out">
+      <div className="w-full sm:w-[28rem] h-[85vh] sm:h-[32rem] max-h-screen sm:max-h-[90vh] bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200/80 transition-all chat-container">
         <ChatHeader onClose={onClose} />
         <ChatMessages 
           messages={messages} 

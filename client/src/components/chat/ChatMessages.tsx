@@ -48,11 +48,13 @@ export default function ChatMessages({ messages, isTyping, onActionClick }: Chat
             <div
               className={`${
                 message.role === 'user'
-                  ? 'bg-blue-700 text-white'
-                  : 'bg-gray-100 text-gray-800'
-              } rounded-2xl py-3 px-4 max-w-[80%] shadow-sm`}
+                  ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-md'
+                  : 'bg-gray-50 text-gray-800 border border-gray-100 shadow-sm'
+              } rounded-2xl py-3 px-4 max-w-[85%] transition-all duration-200`}
             >
-              <p className="text-sm whitespace-pre-line font-light leading-relaxed">{message.content}</p>
+              <p className="text-sm whitespace-pre-line font-normal leading-relaxed">
+                {message.content}
+              </p>
             </div>
           </div>
           

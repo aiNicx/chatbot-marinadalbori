@@ -23,7 +23,12 @@ export default function ChatWidget() {
   return (
     <>
       <ChatButton onClick={toggleChat} isOpen={isOpen} />
-      {isOpen && <div className="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-40 sm:hidden" onClick={toggleChat} />}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40 sm:hidden transition-opacity duration-300 ease-out chat-overlay"
+          onClick={toggleChat}
+        />
+      )}
       <ChatContainer isOpen={isOpen} onClose={toggleChat} />
       
       {/* Add styling for animations and scrollbars */}
@@ -67,12 +72,21 @@ export default function ChatWidget() {
         
         /* Animazioni fluide per apertura/chiusura */
         @keyframes slideIn {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+          from { transform: translateY(10px) scale(0.98); opacity: 0; }
+          to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
         
         .chat-container {
-          animation: slideIn 0.2s ease-out;
+          animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .chat-overlay {
+          animation: fadeIn 0.2s ease-out;
         }
       `}} />
     </>
